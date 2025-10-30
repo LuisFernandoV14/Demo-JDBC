@@ -1,5 +1,8 @@
 package application;
 
+import model.DAO.implemented.DAOFactory;
+import model.DAO.abstracted.DepartmentDAO;
+import model.DAO.abstracted.SellerDAO;
 import model.entities.Department;
 import model.entities.Seller;
 
@@ -9,10 +12,15 @@ public class Main {
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
 
-        Department department = new Department("Electronics", 1 );
-        Seller seller = new Seller(1, "John", "john.1406@gmail.com", "1990-01-31", 2000.00, department);
+        DepartmentDAO departmentDAO = DAOFactory.constructDepartment();
+        Department department = departmentDAO.findById(1);
 
+        SellerDAO sellerDAO = DAOFactory.constructSeller();
+        Seller seller = sellerDAO.findById(1);
+
+        System.out.println();
         System.out.println(department);
+        System.out.println();
         System.out.println(seller);
 
     }
