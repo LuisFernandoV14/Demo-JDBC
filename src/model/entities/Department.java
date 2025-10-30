@@ -39,19 +39,22 @@ public class Department implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Department that = (Department) o;
-        return getId().equals(that.getId()) && getName().equals(that.getName());
+        Department department = (Department) o;
+        return getId().equals(department.getId()) && getName().equals(department.getName());
         /* ---
         Two departments are equal if their Id and Name are the same
         Dois departamentos são iguais se o Id e o Nome forem o mesmo
         --- */
     }
-
     @Override
     public int hashCode() {
         int result = getId().hashCode();
         result = 31 * result + getName().hashCode();
         return result;
+        /* ---
+        Two departments are truly equal if their hashCode are the same and if .equals() returns true
+        Dois departamentos serão verdadeiramente iguais se o hashCode deles forem iguais e se .equals() retornar true
+         --- */
     }
 
     // toString
