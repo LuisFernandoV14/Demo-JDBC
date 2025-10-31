@@ -5,7 +5,6 @@ import db.DbException;
 import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
 import model.DAO.abstracted.SellerDAO;
-import model.entities.Department;
 import model.entities.Seller;
 
 import java.sql.*;
@@ -93,7 +92,9 @@ public class SellerImplemented implements SellerDAO{
 
                 System.out.println("Seller with id '" +  seller.getId() + "' updated");
                 conn.commit();
-            } else System.out.println("There is no Seller with id '" + seller.getId() + "' in the Seller Table");
+            } else {
+                throw new SQLException("There is no Seller with id '" + seller.getId() + "' in the Seller Table");
+            }
 
             conn.setAutoCommit(true);
 

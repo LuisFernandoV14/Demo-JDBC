@@ -5,7 +5,6 @@ import db.DbException;
 import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
 import model.entities.Department;
-import model.entities.Seller;
 
 import java.sql.*;
 import java.util.ArrayList;
