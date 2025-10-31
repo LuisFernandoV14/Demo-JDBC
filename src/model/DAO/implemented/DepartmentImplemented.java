@@ -64,7 +64,36 @@ public class DepartmentImplemented implements DepartmentDAO {
 
     @Override
     public void update(Department department) {
+        PreparedStatement st = null;
 
+        try {
+            conn.setAutoCommit(false);
+
+            if (findById(department.getId()) != null) {
+                st = conn.prepareStatement("UPDATE Department" +
+                        " SET name = ?" +
+                        " WHERE id = ?");
+
+                st.setString(1, department.getName());
+                st.setInt(2, department.getId());
+                st.executeUpdate();
+
+                System.out.println("Department with id '" +  department.getId() + "' updated");
+                conn.commit();
+            } else System.out.println("There is no Department with id '" + department.getId() + "' in the Department Table");
+
+            conn.setAutoCommit(true);
+
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DbIntegrityException("Could not rollback update. Reason: " + e.getMessage());
+            }
+            throw new DbException("Update got rolled back. Reason: " + e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override

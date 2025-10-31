@@ -14,6 +14,8 @@ public class Main {
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
 
+        System.out.println("\n/* ---------------------- */\n");
+
         // Testing Department Insert | Testando Insert em Department
         DepartmentDAO departmentDAO = DAOFactory.constructDepartment();
         // ---
@@ -61,6 +63,32 @@ public class Main {
 
         sellerDAO.deleteById(999);
         departmentDAO.deleteById(999);
+
+        System.out.println("\n/* ---------------------- */\n");
+
+        // Testing update | Testando update
+        Seller seller = sellerDAO.findById(sellerDAO.getLastAdded().getId());
+        seller.setName("Bob Purple");
+        seller.setDepartment(departmentDAO.findById(departmentDAO.getLastAdded().getId()));
+
+        sellerDAO.update(seller);
+
+        Department department = departmentDAO.findById(departmentDAO.getLastAdded().getId());
+        department.setName("RPG");
+
+        departmentDAO.update(department);
+
+        System.out.println("\n/* ---------------------- */\n");
+
+        departments = departmentDAO.findAll();
+        departments.forEach(System.out::println);
+
+        System.out.println("\n/* ---------------------- */\n");
+
+        sellers = sellerDAO.findAll();
+        sellers.forEach(System.out::println);
+
+        System.out.println("\n/* ---------------------- */\n");
 
     }
 }

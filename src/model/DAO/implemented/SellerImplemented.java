@@ -69,6 +69,44 @@ public class SellerImplemented implements SellerDAO{
 
     @Override
     public void update(Seller seller) {
+        PreparedStatement st = null;
+
+        try {
+            conn.setAutoCommit(false);
+
+            if (findById(seller.getId()) != null) {
+                st = conn.prepareStatement("UPDATE Seller" +
+                        " SET name = ?" +
+                        ", email = ?" +
+                        ", birthDate = ?" +
+                        ", baseSalary = ?" +
+                        ", departmentId = ?" +
+                        " WHERE id = ?");
+
+                st.setString(1, seller.getName());
+                st.setString(2, seller.getEmail());
+                st.setDate(3, Date.valueOf(seller.getBirthDate()));
+                st.setDouble(4, seller.getSalary());
+                st.setInt(5, seller.getDepartment().getId());
+                st.setInt(6, seller.getId());
+                st.executeUpdate();
+
+                System.out.println("Seller with id '" +  seller.getId() + "' updated");
+                conn.commit();
+            } else System.out.println("There is no Seller with id '" + seller.getId() + "' in the Seller Table");
+
+            conn.setAutoCommit(true);
+
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DbIntegrityException("Could not rollback update. Reason: " + e.getMessage());
+            }
+            throw new DbException("Update got rolled back. Reason: " + e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+        }
 
     }
 
