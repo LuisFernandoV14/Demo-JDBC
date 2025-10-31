@@ -59,19 +59,21 @@ public class View {
                 What operation would you like to do in Seller Table?""
                  1 - Insert
                  2 - Update
-                 3 - Delete
-                 4 - View all
-                 5 - View by id
+                 3 - Delete by id
+                 4 - View by id
+                 5 - View all
                  0 - Back to first menu
                 R: \s""");
 
         int choice = Integer.parseInt(sc.nextLine());
 
         switch(choice) {
-            case 1:
+            case 1 -> {
+
                 cleanScreen();
 
                 System.out.print("Enter with seller name: ");
+
                 String sellerName = sc.nextLine();
 
                 System.out.print("Enter with seller email: ");
@@ -81,17 +83,18 @@ public class View {
                 String sellerBirthDate = sc.nextLine();
 
                 System.out.print("Enter with seller salary: ");
-                Double  sellerSalary = Double.parseDouble(sc.nextLine());
+                Double sellerSalary = Double.parseDouble(sc.nextLine());
 
                 System.out.print("Enter with seller department ID: ");
                 Department dep = departmentDAO.findById(Integer.parseInt(sc.nextLine()));
 
-                sellerDAO.insert(new Seller( (sellerDAO.getLastAdded().getId() + 1), sellerName, sellerEmail, sellerBirthDate, sellerSalary, dep) );
+                sellerDAO.insert(new Seller((sellerDAO.getLastAdded().getId() + 1), sellerName, sellerEmail, sellerBirthDate, sellerSalary, dep));
 
                 sellerMenu();
-            break;
+            }
 
-            case 2:
+            case 2 -> {
+
                 cleanScreen();
 
                 System.out.print("Enter with seller ID: ");
@@ -125,7 +128,39 @@ public class View {
                 }
 
                 sellerMenu();
-            break;
+            }
+
+            case 3 -> {
+                cleanScreen();
+
+                System.out.print("Enter with seller ID: ");
+                Seller seller = sellerDAO.findById(Integer.parseInt(sc.nextLine()));
+
+                while (true) {
+
+                    System.out.print("You really want to delete: " + seller + " ? (Y/N)\nR: ");
+                    String option = sc.nextLine().toUpperCase();
+
+                    if (option.charAt(0) == 'Y' || option.charAt(0) == 'N') {
+
+                        if (option.charAt(0) == 'Y') {
+                            sellerDAO.deleteById(seller.getId());
+                            sellerMenu();
+                            break;
+                        }
+                        else {
+                            System.out.println("Going back to seller menu...");
+                            sellerMenu();
+                            break;
+                        }
+
+                    } else {
+                        System.out.println("Invalid option. Please, write Y or N.\n");
+                    }
+                }
+
+            }
+
         }
 
     }
