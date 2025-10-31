@@ -1,5 +1,6 @@
 package application;
 
+import db.DbException;
 import model.DAO.implemented.DAOFactory;
 import model.DAO.abstracted.DepartmentDAO;
 import model.DAO.abstracted.SellerDAO;
@@ -17,7 +18,7 @@ public class Main {
         DepartmentDAO departmentDAO = DAOFactory.constructDepartment();
         // ---
         Department dep = new Department("Sports", 2);
-        departmentDAO.insert(dep); // Gives an error | Resulta em erro
+        departmentDAO.insert(dep); // Results in error | Resulta em erro
         // ---
         dep.setId(5);
         departmentDAO.insert(dep); // Insert new Department | Insere Department novo
@@ -46,5 +47,20 @@ public class Main {
         List<Seller> sellers = sellerDAO.findAll();
 
         sellers.forEach(System.out::println);
+
+        System.out.println("\n/* ---------------------- */\n");
+
+        // Testing delete | Testando delete
+        try {
+            departmentDAO.deleteById(5); // Results in error. Can't delete it while it is a FK (Seller.departmentId). | Retorna erro. Não dá pra deletar enquanto ele é uma FK (Seller.departmentID)
+        } catch (DbException e) {
+            System.out.println(e.getMessage());
+            sellerDAO.deleteById(7); // Delete the FK | Deleta a FK
+            departmentDAO.deleteById(5); // Works | Funciona
+        }
+
+        sellerDAO.deleteById(999);
+        departmentDAO.deleteById(999);
+
     }
 }

@@ -69,6 +69,35 @@ public class DepartmentImplemented implements DepartmentDAO {
 
     @Override
     public void deleteById(Integer id) {
+        PreparedStatement st = null;
+
+        try {
+            conn.setAutoCommit(false);
+
+            if (findById(id) != null) {
+                st = conn.prepareStatement("DELETE FROM Department WHERE id = ?");
+                st.setInt(1, id);
+                st.executeUpdate();
+                System.out.println("Deleted Department with id " + id);
+                conn.commit();
+            } else {
+                System.out.println("There is no department with id " + id);
+            }
+
+            conn.setAutoCommit(true);
+
+        } catch (SQLException e) {
+
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DbIntegrityException("Could not rollback Delete. Reason: " + e.getMessage());
+            }
+
+            throw new DbException("Delete got rolled back. Reason: " + e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+        }
 
     }
 
