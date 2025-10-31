@@ -7,6 +7,7 @@ import model.DAO.abstracted.DepartmentDAO;
 import model.entities.Department;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentImplemented implements DepartmentDAO {
@@ -85,7 +86,6 @@ public class DepartmentImplemented implements DepartmentDAO {
                     rs.getInt("id")
                 );
             } else {
-                System.out.println("No record found with id " + id);
                 return null;
             }
 
@@ -101,7 +101,16 @@ public class DepartmentImplemented implements DepartmentDAO {
 
     @Override
     public List<Department> findAll() {
-        return List.of();
+
+        List<Department> result = new ArrayList<>();
+        int i = 1;
+
+        while (findById(i) != null) {
+            result.add(findById(i));
+            i++;
+        }
+
+        return result;
     }
 
     @Override

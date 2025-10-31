@@ -5,9 +5,11 @@ import db.DbException;
 import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
 import model.DAO.abstracted.SellerDAO;
+import model.entities.Department;
 import model.entities.Seller;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SellerImplemented implements SellerDAO{
@@ -94,7 +96,6 @@ public class SellerImplemented implements SellerDAO{
                         dep.findById(rs.getInt("departmentId"))
                 );
             } else {
-                System.out.println("No record found with id " + id);
                 return null;
             }
 
@@ -110,7 +111,15 @@ public class SellerImplemented implements SellerDAO{
 
     @Override
     public List<Seller> findAll() {
-        return List.of();
+        List<Seller> result = new ArrayList<>();
+        int i = 1;
+
+        while (findById(i) != null) {
+            result.add(findById(i));
+            i++;
+        }
+
+        return result;
     }
 
     @Override

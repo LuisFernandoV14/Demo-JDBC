@@ -6,6 +6,7 @@ import model.DAO.abstracted.SellerDAO;
 import model.entities.Department;
 import model.entities.Seller;
 
+import java.util.List;
 import java.util.Locale;
 
 public class Main {
@@ -32,5 +33,18 @@ public class Main {
         sel.setId(7);
         sellerDAO.insert(sel); // Insert new Seller | Insere Seller novo
 
+        System.out.println("\n/* ---------------------- */\n");
+
+        // Testing findAll from departments | Testando findAll para departamentos
+        List<Department> departments = departmentDAO.findAll();
+
+        departments.forEach(System.out::println);
+
+        System.out.println("\n/* ---------------------- */\n");
+
+        // Testing findAll from sellers | Testando findAll para vendedores
+        List<Seller> sellers = sellerDAO.findAll();
+
+        sellers.forEach(System.out::println);
     }
 }
