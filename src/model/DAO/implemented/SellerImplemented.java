@@ -44,7 +44,10 @@ public class SellerImplemented implements SellerDAO{
 
                 conn.commit();
 
-            } else System.out.println("A seller with id '" + seller.getId() + "' already exists in the Seller Table");
+            } else {
+                System.out.println("A seller with id '" + seller.getId() + "' already exists in the Seller Table");
+                System.out.println("The last Seller added has the Id: " + getLastAdded().getId());
+            }
 
             conn.setAutoCommit(true);
 
@@ -123,7 +126,14 @@ public class SellerImplemented implements SellerDAO{
     }
 
     @Override
-    public int getLastAddedById() {
-        return 0;
+    public Seller getLastAdded() {
+        List<Seller> sellers = findAll();
+
+        if (sellers.isEmpty()) {
+            System.out.println("No seller was added");
+            return null;
+        }
+
+        return sellers.getLast();
     }
 }

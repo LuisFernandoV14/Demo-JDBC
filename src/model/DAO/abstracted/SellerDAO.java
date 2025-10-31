@@ -10,5 +10,5 @@ public interface SellerDAO {
     void deleteById(Integer id);
     Seller findById(Integer id);
     List<Seller> findAll();
-    int getLastAddedById();
+    Seller getLastAdded();
 }

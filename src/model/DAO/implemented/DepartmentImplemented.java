@@ -5,6 +5,7 @@ import db.DbException;
 import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
 import model.entities.Department;
+import model.entities.Seller;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,7 +39,10 @@ public class DepartmentImplemented implements DepartmentDAO {
 
                 conn.commit();
 
-            } else System.out.println("A department with id '" + department.getId() + "' already exists in the Department Table");
+            } else {
+                System.out.println("A department with id '" + department.getId() + "' already exists in the Department Table");
+                System.out.println("The last Department added has the Id: " + getLastAdded().getId());
+            }
 
             conn.setAutoCommit(true);
 
@@ -114,7 +118,14 @@ public class DepartmentImplemented implements DepartmentDAO {
     }
 
     @Override
-    public int getLastAddedById() {
-        return 0;
+    public Department getLastAdded() {
+        List<Department> departments = findAll();
+
+        if (departments.isEmpty()) {
+            System.out.println("No Department was added");
+            return null;
+        }
+
+        return departments.getLast();
     }
 }
