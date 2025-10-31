@@ -2,19 +2,17 @@ package model.DAO.implemented;
 
 import db.DB;
 import db.DbException;
+import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
 import model.DAO.abstracted.SellerDAO;
 import model.entities.Seller;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class SellerImplemented implements SellerDAO{
 
-    Connection conn = null;
+    Connection conn;
 
     public SellerImplemented(Connection conn) {
         this.conn = conn;
@@ -22,6 +20,45 @@ public class SellerImplemented implements SellerDAO{
 
     @Override
     public void insert(Seller seller) {
+        PreparedStatement ps = null;
+
+        try {
+
+            conn.setAutoCommit(false);
+
+            if (findById(seller.getId()) == null) {
+
+                System.out.println("Creating Seller with id " + seller.getId());
+
+                ps = conn.prepareStatement("INSERT INTO seller (id, name, email, birthDate, baseSalary, departmentId) VALUES (?, ?, ?, ?, ?, ?)");
+                ps.setInt(1, seller.getId());
+                ps.setString(2, seller.getName());
+                ps.setString(3, seller.getEmail());
+                ps.setDate(4, Date.valueOf(seller.getBirthDate()));
+                ps.setDouble(5, seller.getSalary());
+                ps.setInt(6, seller.getDepartment().getId());
+
+                ps.executeUpdate();
+
+                conn.commit();
+
+            } else System.out.println("A seller with id '" + seller.getId() + "' already exists in the Seller Table");
+
+            conn.setAutoCommit(true);
+
+        } catch (SQLException e) {
+
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DbIntegrityException("Could not rollback Insert. Reason: " + e.getMessage());
+            }
+
+            throw new DbException("Insert got rolled back. Reason: " + e.getMessage());
+
+        } finally {
+            DB.closeStatement(ps);
+        }
 
     }
 
@@ -40,22 +77,26 @@ public class SellerImplemented implements SellerDAO{
 
         Statement st = null;
         ResultSet rs = null;
-        Seller result = null;
+        Seller result;
         DepartmentDAO dep = DAOFactory.constructDepartment();
 
         try {
             st = conn.createStatement();
             rs = st.executeQuery("SELECT * FROM seller WHERE id = " + id);
-            rs.next();
 
-            result = new Seller(
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("email"),
-                    String.valueOf(rs.getDate("birthDate")),
-                    rs.getDouble("basesalary"),
-                    dep.findById(rs.getInt("departmentId"))
-            );
+            if (rs.next()) {
+                result = new Seller(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        String.valueOf(rs.getDate("birthDate")),
+                        rs.getDouble("basesalary"),
+                        dep.findById(rs.getInt("departmentId"))
+                );
+            } else {
+                System.out.println("No record found with id " + id);
+                return null;
+            }
 
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
@@ -70,5 +111,10 @@ public class SellerImplemented implements SellerDAO{
     @Override
     public List<Seller> findAll() {
         return List.of();
+    }
+
+    @Override
+    public int getLastAddedById() {
+        return 0;
     }
 }

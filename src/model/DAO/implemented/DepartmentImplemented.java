@@ -2,18 +2,16 @@ package model.DAO.implemented;
 
 import db.DB;
 import db.DbException;
+import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
 import model.entities.Department;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class DepartmentImplemented implements DepartmentDAO {
 
-    Connection conn = null;
+    Connection conn;
 
     public DepartmentImplemented(Connection conn) {
         this.conn = conn;
@@ -21,6 +19,41 @@ public class DepartmentImplemented implements DepartmentDAO {
 
     @Override
     public void insert(Department department) {
+        PreparedStatement ps = null;
+
+        try {
+
+            conn.setAutoCommit(false);
+
+            if (findById(department.getId()) == null) {
+
+                System.out.println("Creating Department with id " + department.getId());
+
+                ps = conn.prepareStatement("INSERT INTO department (id, name) VALUES (?, ?)");
+                ps.setInt(1, department.getId());
+                ps.setString(2, department.getName());
+
+                ps.executeUpdate();
+
+                conn.commit();
+
+            } else System.out.println("A department with id '" + department.getId() + "' already exists in the Department Table");
+
+            conn.setAutoCommit(true);
+
+        } catch (SQLException e) {
+
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DbIntegrityException("Could not rollback Insert. Reason: " + e.getMessage());
+            }
+
+            throw new DbException("Insert got rolled back. Reason: " + e.getMessage());
+
+        } finally {
+            DB.closeStatement(ps);
+        }
 
     }
 
@@ -39,18 +72,22 @@ public class DepartmentImplemented implements DepartmentDAO {
 
         Statement st = null;
         ResultSet rs = null;
-        Department result = null;
+        Department result;
 
         try {
 
             st = conn.createStatement();
             rs = st.executeQuery("SELECT * FROM department WHERE id = " + id);
-            rs.next();
 
-            result = new Department(
+            if (rs.next()) {
+                result = new Department(
                     rs.getString("name"),
                     rs.getInt("id")
-            );
+                );
+            } else {
+                System.out.println("No record found with id " + id);
+                return null;
+            }
 
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
@@ -65,5 +102,10 @@ public class DepartmentImplemented implements DepartmentDAO {
     @Override
     public List<Department> findAll() {
         return List.of();
+    }
+
+    @Override
+    public int getLastAddedById() {
+        return 0;
     }
 }

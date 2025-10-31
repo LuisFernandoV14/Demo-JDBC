@@ -60,6 +60,12 @@ public class Seller implements Serializable {
     public void setSalary(Double salary) {
         this.salary = salary;
     }
+    public Department getDepartment() {
+        return department;
+    }
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
     // hashCode and equals
     @Override
