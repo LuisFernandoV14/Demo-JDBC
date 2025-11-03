@@ -1,5 +1,6 @@
 package view;
 
+import db.DB;
 import db.DbException;
 import db.DbIntegrityException;
 import model.DAO.abstracted.DepartmentDAO;
@@ -67,6 +68,9 @@ public class View {
             break;
 
             case 0:
+                System.out.println("Closing the program...");
+                DB.closeConnection();
+                sc.close();
             break;
         }
 
@@ -246,7 +250,6 @@ public class View {
                 clearScreen();
                 menu();
             }
-
         }
 
     }
@@ -318,7 +321,88 @@ public class View {
                 departmentMenu();
             }
 
+            case 3 -> {
 
+                clearScreen();
+
+                System.out.print("Enter with department ID: ");
+                Department department = departmentDAO.findById(Integer.parseInt(sc.nextLine()));
+
+                while (true) {
+
+                    System.out.print("You really want to delete: " + department + " ? (Y/N)\nR: ");
+                    String option = sc.nextLine().toUpperCase();
+
+                    if (option.charAt(0) == 'Y' || option.charAt(0) == 'N') {
+
+                        if (option.charAt(0) == 'Y') {
+                            departmentDAO.deleteById(department.getId());
+                            departmentMenu();
+                            break;
+                        }
+                        else {
+                            System.out.println("Going back to department menu...");
+                            departmentMenu();
+                            break;
+                        }
+
+                    } else {
+                        System.out.println("Invalid option. Please, write Y or N.\n");
+                    }
+                }
+
+            }
+
+            case 4 -> {
+
+                clearScreen();
+
+                while (true) {
+
+                    System.out.println("Enter with department ID: ");
+
+                    try{
+                        Department department = departmentDAO.findById(Integer.parseInt(sc.nextLine()));
+                        System.out.println(department);
+                    } catch (DbException | DbIntegrityException e){
+                        System.out.println(e.getMessage());
+                    }
+
+                    String option;
+
+                    while (true) {
+                        System.out.println("Want to view another department? (Y/N)");
+                        option = sc.nextLine().toUpperCase();
+
+                        if (option.charAt(0) == 'Y' || option.charAt(0) == 'N') { break; }
+                        else { System.out.println("Invalid option. Please, write Y or N.\n"); }
+                    }
+
+                    if (option.charAt(0) == 'N') {break;}
+
+                }
+
+                System.out.println("Going back to department menu...");
+                departmentMenu();
+            }
+
+            case 5 -> {
+
+                clearScreen();
+
+                System.out.println("Departments in the department table: ");
+
+                List<Department> departments = departmentDAO.findAll();
+                departments.forEach(System.out::println);
+
+                departmentMenu();
+            }
+
+            case 0 -> {
+                System.out.println("Going back to menu...");
+                clearScreen();
+                menu();
+            }
         }
 
     }
@@ -349,5 +433,3 @@ public class View {
     }
 
 }
-
-
