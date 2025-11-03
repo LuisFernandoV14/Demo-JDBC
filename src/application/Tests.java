@@ -10,7 +10,7 @@ import model.entities.Seller;
 import java.util.List;
 import java.util.Locale;
 
-public class Main {
+public class Tests {
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
 
