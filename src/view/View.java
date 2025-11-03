@@ -161,6 +161,38 @@ public class View {
 
             }
 
+            case 4 -> {
+                cleanScreen();
+
+                while (true) {
+
+                    System.out.println("Enter with seller ID: ");
+
+                    try{
+                        Seller seller = sellerDAO.findById(Integer.parseInt(sc.nextLine()));
+                        System.out.println(seller);
+                    } catch (DbException | DbIntegrityException e){
+                        System.out.println(e.getMessage());
+                    }
+
+                    String option;
+
+                    while (true) {
+                        System.out.println("Want to view another seller? (Y/N)");
+                        option = sc.nextLine().toUpperCase();
+
+                        if (option.charAt(0) == 'Y' || option.charAt(0) == 'N') { break; }
+                        else { System.out.println("Invalid option. Please, write Y or N.\n"); }
+                    }
+
+                    if (option.charAt(0) == 'N') {break;}
+
+                }
+
+                System.out.println("Going back to seller menu...");
+                sellerMenu();
+            }
+
         }
 
     }
