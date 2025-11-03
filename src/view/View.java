@@ -12,6 +12,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLOutput;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class View {
@@ -54,23 +56,39 @@ public class View {
     }
 
     public void sellerMenu() {
-        cleanScreen();
-        System.out.print("""
-                What operation would you like to do in Seller Table?""
-                 1 - Insert
-                 2 - Update
-                 3 - Delete by id
-                 4 - View by id
-                 5 - View all
-                 0 - Back to first menu
-                R: \s""");
 
-        int choice = Integer.parseInt(sc.nextLine());
+        int choice;
+
+        while (true) {
+            clearScreen();
+
+            System.out.print("""
+                    What operation would you like to do in Seller Table?""
+                     1 - Insert
+                     2 - Update
+                     3 - Delete by id
+                     4 - View by id
+                     5 - View all
+                     0 - Back to first menu
+                    R: \s""");
+
+
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            if (choice >= 0 && choice <= 5) {break;}
+            else System.out.println("Invalid choice. Try again.");
+
+        }
 
         switch(choice) {
             case 1 -> {
 
-                cleanScreen();
+                clearScreen();
 
                 System.out.print("Enter with seller name: ");
 
@@ -95,7 +113,7 @@ public class View {
 
             case 2 -> {
 
-                cleanScreen();
+                clearScreen();
 
                 System.out.print("Enter with seller ID: ");
                 Seller seller = null;
@@ -131,7 +149,8 @@ public class View {
             }
 
             case 3 -> {
-                cleanScreen();
+
+                clearScreen();
 
                 System.out.print("Enter with seller ID: ");
                 Seller seller = sellerDAO.findById(Integer.parseInt(sc.nextLine()));
@@ -162,7 +181,8 @@ public class View {
             }
 
             case 4 -> {
-                cleanScreen();
+
+                clearScreen();
 
                 while (true) {
 
@@ -193,11 +213,29 @@ public class View {
                 sellerMenu();
             }
 
+            case 5 -> {
+
+                clearScreen();
+
+                System.out.println("Sellers in the Seller table: ");
+
+                List<Seller> sellers = sellerDAO.findAll();
+                sellers.forEach(System.out::println);
+
+                sellerMenu();
+            }
+
+            case 0 -> {
+                System.out.println("Going back to menu...");
+                clearScreen();
+                menu();
+            }
+
         }
 
     }
 
-    public void cleanScreen() {
+    public void clearScreen() {
         System.out.println("\nPress ENTER to continue...");
         sc.nextLine();
 
