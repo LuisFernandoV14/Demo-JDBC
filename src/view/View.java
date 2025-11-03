@@ -9,10 +9,7 @@ import model.entities.Department;
 import model.entities.Seller;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,13 +29,32 @@ public class View {
 
     public void menu() {
 
-        System.out.print("""
-               Which table do you want to use?""
-                1 - Seller
-                2 - Department
-                0 - End Program\s
-               R: \s""");
-        int choice = Integer.parseInt(sc.nextLine());
+        int choice;
+
+        while (true) {
+
+            System.out.print("""
+                   Which table do you want to use?""
+                    1 - Seller
+                    2 - Department
+                    0 - End Program\s
+                   R: \s""");
+
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Try again.");
+                clearScreen();
+                continue;
+            }
+
+            if (choice >= 0 && choice <= 2) {break;}
+            else {
+                System.out.println("Invalid choice. Try again.");
+                clearScreen();
+            }
+
+        }
 
         switch(choice) {
 
@@ -47,6 +63,7 @@ public class View {
             break;
 
             case 2:
+                departmentMenu();
             break;
 
             case 0:
@@ -71,7 +88,6 @@ public class View {
                      5 - View all
                      0 - Back to first menu
                     R: \s""");
-
 
             try {
                 choice = Integer.parseInt(sc.nextLine());
@@ -230,6 +246,78 @@ public class View {
                 clearScreen();
                 menu();
             }
+
+        }
+
+    }
+
+    public void departmentMenu() {
+        int choice;
+
+        while (true) {
+            clearScreen();
+
+            System.out.print("""
+                    What operation would you like to do in Seller Table?""
+                     1 - Insert
+                     2 - Update
+                     3 - Delete by id
+                     4 - View by id
+                     5 - View all
+                     0 - Back to first menu
+                    R: \s""");
+
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            if (choice >= 0 && choice <= 5) {
+                break;
+            } else System.out.println("Invalid choice. Try again.");
+
+        }
+
+        switch (choice) {
+            case 1 -> {
+
+                clearScreen();
+
+                System.out.print("Enter with department name: ");
+                String departmentName = sc.nextLine();
+
+                departmentDAO.insert(new Department(departmentName, departmentDAO.getLastAdded().getId() + 1));
+
+                departmentMenu();
+            }
+
+            case 2 -> {
+
+                clearScreen();
+
+                System.out.print("Enter with department ID: ");
+                Department department = null;
+
+                try{
+                    department = departmentDAO.findById(Integer.parseInt(sc.nextLine()));
+                } catch (DbException | DbIntegrityException e){
+                    System.out.println(e.getMessage());
+                    departmentMenu();
+                }
+
+                if (department != null) {
+
+                    System.out.print("Enter with new (or old) seller name: ");
+                    department.setName(sc.nextLine());
+
+                    departmentDAO.update(department);
+                }
+
+                departmentMenu();
+            }
+
 
         }
 
